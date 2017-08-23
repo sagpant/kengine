@@ -25,7 +25,7 @@ file(GLOB SOURCE_FILES
         include/*.hpp)
 
 add_executable(${project_name} ${SOURCE_FILES})
-target_link_libraries(${project_name} ${OpenVC_LIBS} ${Boost_LIBS} kengine)
+target_link_libraries(${project_name} kengine)
 
 file(COPY "resources" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
