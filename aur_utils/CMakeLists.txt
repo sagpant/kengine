@@ -13,10 +13,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/")
 include_directories(include)
 
 # Set this flag to build and link with default sfml engine
-set(PUTILS_BUILD_PSE TRUE)
+set(KENGINE_SFML TRUE)
 
 # Set this to build and link with default Ogre3D engine
-#set(PUTILS_BUILD_POGRE TRUE)
+#set(KENGINE_OGRE TRUE)
 
 add_subdirectory(${engine_dir})
 
