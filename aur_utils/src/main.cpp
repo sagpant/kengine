@@ -2,6 +2,7 @@
 #include <DefaultFactory.hpp>
 #include <EntityManager.hpp>
 #include <putils/go_to_bin_dir.hpp>
+#include <common/systems/LuaSystem.hpp>
 
 int main(int ac, char* av[])
 {
@@ -11,8 +12,15 @@ int main(int ac, char* av[])
     kengine::EntityManager    em(std::move(std::make_unique<DefaultFactory>(factory)));
 
     // Loads sfml that has been build from cmake (PUTILS_BUILD_PSE)
-    em.loadSystems(".");
+    em.loadSystems<kengine::LuaSystem>(".");
     auto& go  = em.createEntity("Hellow", "First");
+
+    em.registerTypes<
+        kengine::LuaSystem,
+        kengine::TransformComponent3d,
+        putils::Point3d,
+        putils::Rect3d
+    >();
 
     std::cout << go << std::endl;
 

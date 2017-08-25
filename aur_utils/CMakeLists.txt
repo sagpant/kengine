@@ -25,7 +25,7 @@ file(GLOB SOURCE_FILES
         include/*.hpp)
 
 add_executable(${project_name} ${SOURCE_FILES})
-target_link_libraries(${project_name} kengine)
+target_link_libraries(${project_name} kengine lua)
 
 file(COPY "resources" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
