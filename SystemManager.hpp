@@ -10,6 +10,7 @@
 #include "GameObject.hpp"
 #include "Mediator.hpp"
 #include "pluginManager/PluginManager.hpp"
+#include "Timer.hpp"
 
 namespace kengine
 {
@@ -29,41 +30,68 @@ namespace kengine
         void execute() const
         {
             for (auto & [type, s] : _systems)
-                s->execute();
+            {
+                auto &time = s->time;
+                auto &timer = time.timer;
+
+                if (time.alwaysCall || timer.isDone())
+                {
+                    time.deltaTime = timer.getTimeSinceStart();
+                    timer.setStart(
+                            putils::Timer::t_clock::now() -
+                                    std::chrono::duration_cast<putils::Timer::t_clock::duration>(timer.getTimeSinceDone())
+                    );
+
+                    try
+                    {
+                        s->execute();
+                    }
+                    catch (const std::exception &e) { std::cerr << e.what() << std::endl; }
+                }
+            }
         }
 
     public:
         template<typename T, typename ...Args>
         void createSystem(Args &&...args)
         {
-            if constexpr (!std::is_base_of<ISystem, T>::value)
-                static_assert("Attempt to create something that's not a System");
-
+            static_assert(std::is_base_of<ISystem, T>::value,
+                          "Attempt to create something that's not a System");
             addSystem(std::make_unique<T>(std::forward<Args>(args)...));
         }
 
         void addSystem(std::unique_ptr<ISystem> &&system)
         {
-            addModule(system.get());
+            const auto nbFrames = system->getFrameRate();
+
+            auto &time = system->time;
+            if (nbFrames == 0)
+            {
+                time.alwaysCall = true;
+                time.fixedDeltaTime = std::chrono::seconds(0);
+            }
+            else
+            {
+                time.alwaysCall = false;
+                time.fixedDeltaTime = std::chrono::milliseconds(1000 / nbFrames);
+            }
+            time.timer.setDuration(time.fixedDeltaTime);
+
+            addModule(*system);
             const auto type = system->getType();
+
             _systems.emplace(type, std::move(system));
         }
 
     public:
         template<typename ...Systems>
-        void loadSystems(std::string_view pluginDir = "plugins", std::string_view creatorFunction = "getSystem")
+        void loadSystems(std::string_view pluginDir = "plugins", std::string_view creatorFunction = "getSystem", bool pluginsFirst = false)
         {
-            putils::PluginManager pm(pluginDir);
+            if (pluginsFirst)
+                loadPlugins(pluginDir, creatorFunction);
 
             // Call "creatorFunc" in each plugin, passing myself as an EntityManager
             auto &em = static_cast<kengine::EntityManager &>(*this);
-
-            const auto systems = pm.executeWithReturn<kengine::ISystem *>(
-                    creatorFunction, em
-            );
-
-            for (auto s : systems)
-                addSystem(std::unique_ptr<kengine::ISystem>(s));
 
             pmeta::tuple_for_each(std::tuple<pmeta::type<Systems>...>(),
                     [this, &em](auto &&type)
@@ -72,6 +100,9 @@ namespace kengine
                         createSystem<System>(em);
                     }
             );
+
+            if (!pluginsFirst)
+                loadPlugins(pluginDir, creatorFunction);
         }
 
     public:
@@ -110,12 +141,21 @@ namespace kengine
             }
         }
 
-        // Implementation detail
     private:
-        bool matchMasks(pmeta::type_index mask, const kengine::GameObject &go)
+        template<typename StringView>
+        void loadPlugins(StringView pluginDir, StringView creatorFunction)
         {
-            const auto &goMask = go.getTypes();
-            return std::find(goMask.begin(), goMask.end(), mask) != goMask.end();
+            putils::PluginManager pm(pluginDir);
+
+            // Call "creatorFunc" in each plugin, passing myself as an EntityManager
+            auto &em = static_cast<kengine::EntityManager &>(*this);
+
+            const auto systems = pm.executeWithReturn<kengine::ISystem *>(
+                    creatorFunction, em
+            );
+
+            for (auto s : systems)
+                addSystem(std::unique_ptr<kengine::ISystem>(s));
         }
 
     private:

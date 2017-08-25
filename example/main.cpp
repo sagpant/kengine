@@ -19,17 +19,17 @@ int main(int, char **av)
     kengine::EntityManager em(std::make_unique<kengine::ExtensibleFactory>());
 
     // Load the specified systems, and any plugin placed in the executable's directory
-    //      If you specify 'PUTILS_BUILD_PSE' as TRUE in your CMakeLists.txt, this will load the SfSystem
+    //      If you specify 'KENGINE_SFML' as TRUE in your CMakeLists.txt, this will load the SfSystem
+    em.loadSystems<kengine::LuaSystem, kengine::LogSystem>(".");
 
     // To add a new system, simply add a DLL with a
     //      `ISystem *getSystem(kengine::EntityManager &em)`
     // function to the "plugins" directory
-    em.loadSystems<kengine::LuaSystem, kengine::LogSystem>(".");
 
 
     // Get the factory and register any desired types
     auto &factory = em.getFactory<kengine::ExtensibleFactory>();
-    factory.addType("GameObject", [](auto name) { return std::make_unique<kengine::GameObject>(name); });
+    factory.registerTypes<kengine::GameObject>();
 
     // Create a GameObject and attach Components to it
     auto &player = em.createEntity<kengine::GameObject>("player");

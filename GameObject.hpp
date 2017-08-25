@@ -44,9 +44,8 @@ namespace kengine
         template<typename CT, typename ...Args>
         CT &attachComponent(Args &&...args)
         {
-            if constexpr (!std::is_base_of<IComponent, CT>::value)
-                static_assert("Attempt to attach something that's not a component");
-
+            static_assert(std::is_base_of<IComponent, CT>::value,
+                          "Attempt to attach something that's not a component");
             return attachComponent(std::make_unique<CT>(FWD(args)...));
         }
 
@@ -54,18 +53,16 @@ namespace kengine
         template<class CT>
         CT &getComponent()
         {
-            if constexpr (!std::is_base_of<IComponent, CT>::value)
-                static_assert("Attempt to get something that's not a component");
-
+            static_assert(std::is_base_of<IComponent, CT>::value,
+                          "Attempt to get something that's not a component");
             return static_cast<CT &>(*_components.at(pmeta::type<CT>::index));
         };
 
         template<class CT>
         const CT &getComponent() const
         {
-            if constexpr (!std::is_base_of<IComponent, CT>::value)
-                static_assert("Attempt to get something that's not a component");
-
+            static_assert(std::is_base_of<IComponent, CT>::value,
+                          "Attempt to get something that's not a component");
             return static_cast<const CT &>(*_components.at(pmeta::type<CT>::index));
         };
 
@@ -73,9 +70,8 @@ namespace kengine
         template<typename CT>
         bool hasComponent() const noexcept
         {
-            if constexpr (!std::is_base_of<IComponent, CT>::value)
-                static_assert("Attempt to get something that's not a component");
-
+            static_assert(std::is_base_of<IComponent, CT>::value,
+                          "Attempt to get something that's not a component");
             return _components.find(pmeta::type<CT>::index) != _components.end();
         }
 
@@ -106,8 +102,8 @@ namespace kengine
         static const auto &get_attributes()
         {
             static const auto table = pmeta::make_table(
-                    "name", &GameObject::_name,
-                    "components", &GameObject::_components
+                    pmeta_reflectible_attribute_private(&GameObject::_name),
+                    pmeta_reflectible_attribute_private(&GameObject::_components)
             );
             return table;
         }
@@ -115,7 +111,7 @@ namespace kengine
         static const auto &get_methods()
         {
             static const auto table = pmeta::make_table(
-                    "getName", &GameObject::getName
+                    pmeta_reflectible_attribute(&GameObject::getName)
             );
             return table;
         }
@@ -123,7 +119,7 @@ namespace kengine
         static const auto &get_parents()
         {
             static const auto table = pmeta::make_table(
-                    "Mediator", pmeta::type<putils::Mediator>()
+                    pmeta_reflectible_parent(putils::Mediator)
             );
             return table;
         }
@@ -135,8 +131,8 @@ namespace kengine
 template<typename CT>
 void kengine::GameObject::detachComponent()
 {
-    if constexpr (!std::is_base_of<IComponent, CT>::value)
-        static_assert("Attempt to detach something that's not a component");
+    static_assert(std::is_base_of<IComponent, CT>::value,
+                  "Attempt to detach something that's not a component");
 
     if (_manager)
         _manager->removeComponent(*this, getComponent<CT>());
@@ -149,8 +145,8 @@ void kengine::GameObject::detachComponent()
 template<typename CT>
 void kengine::GameObject::detachComponent(const CT &comp)
 {
-    if constexpr (!std::is_base_of<IComponent, CT>::value)
-        static_assert("Attempt to detach something that's not a component");
+    static_assert(std::is_base_of<IComponent, CT>::value,
+                  "Attempt to detach something that's not a component");
 
     if (_manager)
         _manager->removeComponent(*this, comp);
@@ -163,12 +159,12 @@ void kengine::GameObject::detachComponent(const CT &comp)
 template<typename CT>
 CT &kengine::GameObject::attachComponent(std::unique_ptr<CT> &&comp)
 {
-    if constexpr (!std::is_base_of<IComponent, CT>::value)
-        static_assert("Attempt to attach something that's not a component");
+    static_assert(std::is_base_of<IComponent, CT>::value,
+                  "Attempt to attach something that's not a component");
 
     auto &ret = *comp;
 
-    this->addModule(comp.get());
+    addModule(*comp);
     const auto type = comp->getType();
     _components.emplace(type, std::move(comp));
     _types.push_back(type);
