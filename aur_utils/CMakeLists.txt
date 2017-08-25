@@ -31,3 +31,5 @@ file(COPY "resources" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Keep this line and setup a sf-config.json file accordingly to override default settings
 file(COPY "sf-config.json" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+# Keep this line to copy lua scrips folder to bin dir
+file(COPY "scripts" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
