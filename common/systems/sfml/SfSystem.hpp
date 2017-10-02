@@ -14,8 +14,10 @@ namespace kengine
     class EntityManager;
 
     class SfSystem : public kengine::System<SfSystem, packets::RegisterAppearance,
-            packets::RegisterKeyHandler, packets::RegisterMouseButtonHandler, packets::RegisterMouseMovedHandler,
-            packets::KeyStatus::Query, packets::MouseButtonStatus::Query, packets::MousePosition::Query>
+                                            packets::RegisterKeyHandler, packets::RegisterMouseButtonHandler,
+                                            packets::RegisterMouseMovedHandler,
+                                            packets::KeyStatus::Query, packets::MouseButtonStatus::Query,
+                                            packets::MousePosition::Query>
     {
     public:
         SfSystem(kengine::EntityManager& em);
@@ -29,17 +31,17 @@ namespace kengine
         void handle(const packets::RegisterAppearance& p) noexcept;
 
     public:
-        void handle(const packets::RegisterKeyHandler &p) noexcept;
-        void handle(const packets::RegisterMouseMovedHandler &p) noexcept;
-        void handle(const packets::RegisterMouseButtonHandler &p) noexcept;
+        void handle(const packets::RegisterKeyHandler& p) noexcept;
+        void handle(const packets::RegisterMouseMovedHandler& p) noexcept;
+        void handle(const packets::RegisterMouseButtonHandler& p) noexcept;
 
     public:
-        void handle(const packets::KeyStatus::Query &p) noexcept;
-        void handle(const packets::MouseButtonStatus::Query &p) noexcept;
-        void handle(const packets::MousePosition::Query &p) noexcept;
+        void handle(const packets::KeyStatus::Query& p) noexcept;
+        void handle(const packets::MouseButtonStatus::Query& p) noexcept;
+        void handle(const packets::MousePosition::Query& p) noexcept;
 
     private:
-        SfComponent &getResource(kengine::GameObject& go);
+        SfComponent& getResource(kengine::GameObject& go);
 
     private:
         putils::json::Object _config;
@@ -54,7 +56,7 @@ namespace kengine
         bool parseBool(std::string_view propertyName, bool _default);
 
     private:
-        kengine::EntityManager & _em;
+        kengine::EntityManager& _em;
         pse::Engine _engine;
         std::unordered_map<kengine::GameObject*, std::unique_ptr<pse::ViewItem>> _viewItems;
         std::unordered_map<std::string, std::string> _appearances;
@@ -62,7 +64,7 @@ namespace kengine
         // Input
     private:
         std::unordered_map<sf::Keyboard::Key, packets::RegisterKeyHandler> _keyHandlers;
-        std::function<void(const putils::Point2i &)> _mouseMovedHandler = nullptr;
+        std::function<void(const putils::Point2i&)> _mouseMovedHandler = nullptr;
         std::unordered_map<sf::Mouse::Button, packets::RegisterMouseButtonHandler> _mouseButtonHandlers;
     };
 }

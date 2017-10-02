@@ -11,14 +11,17 @@ namespace kengine
         {
             std::string msg;
 
-            Log(std::string_view msg = "") : msg(msg) {}
+            Log(std::string_view msg = "") : msg(msg)
+            { }
 
             /*
              * Reflectible
              */
 
-            static const auto get_class_name() { return pmeta_nameof(Log); }
-            static const auto &get_attributes()
+            static const auto get_class_name()
+            { return pmeta_nameof(Log); }
+
+            static const auto& get_attributes()
             {
                 static const auto table = pmeta::make_table(
                         pmeta_reflectible_attribute(&Log::msg)
@@ -26,13 +29,13 @@ namespace kengine
                 return table;
             }
 
-            static const auto &get_methods()
+            static const auto& get_methods()
             {
                 static const auto table = pmeta::make_table();
                 return table;
             }
 
-            static const auto &get_parents()
+            static const auto& get_parents()
             {
                 static const auto table = pmeta::make_table();
                 return table;

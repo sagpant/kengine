@@ -11,9 +11,9 @@ namespace kengine
     {
     public:
         template<typename ...MemberPairs>
-        SerializableComponent(MemberPairs &&...pairs)
+        SerializableComponent(MemberPairs&& ...pairs)
                 : putils::Serializable<CRTP, false>(FWD(pairs)...)
-        {}
+        { }
 
         SerializableComponent() = default;
 
@@ -25,21 +25,22 @@ namespace kengine
         }
 
     public:
-        static const auto get_class_name() { return pmeta_nameof(SerializableComponent); }
+        static const auto get_class_name()
+        { return pmeta_nameof(SerializableComponent); }
 
-        static const auto &get_attributes()
+        static const auto& get_attributes()
         {
             static const auto table = pmeta::make_table();
             return table;
         }
 
-        static const auto &get_methods()
+        static const auto& get_methods()
         {
             static const auto table = pmeta::make_table();
             return table;
         }
 
-        static const auto &get_parents()
+        static const auto& get_parents()
         {
             static const auto table = pmeta::make_table();
             return table;

@@ -10,7 +10,8 @@ namespace kengine
     {
     public:
         MetaComponent(std::string_view appearance = "")
-                : appearance(appearance) {}
+                : appearance(appearance)
+        { }
 
         const std::string type = pmeta_nameof(MetaComponent);
         std::string appearance;
@@ -20,9 +21,10 @@ namespace kengine
          */
 
     public:
-        static const auto get_class_name() { return pmeta_nameof(MetaComponent); }
+        static const auto get_class_name()
+        { return pmeta_nameof(MetaComponent); }
 
-        static const auto &get_attributes()
+        static const auto& get_attributes()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_attribute(&MetaComponent::type),
@@ -31,13 +33,13 @@ namespace kengine
             return table;
         }
 
-        static const auto &get_methods()
+        static const auto& get_methods()
         {
             static const auto table = pmeta::make_table();
             return table;
         }
 
-        static const auto &get_parents()
+        static const auto& get_parents()
         {
             static const auto table = pmeta::make_table();
             return table;

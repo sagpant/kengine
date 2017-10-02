@@ -5,7 +5,10 @@
 #include <SFML/Window/Mouse.hpp>
 #include "Point.hpp"
 
-namespace putils { class BaseModule; }
+namespace putils
+{
+    class BaseModule;
+}
 
 namespace kengine
 {
@@ -20,7 +23,7 @@ namespace kengine
 
         struct RegisterMouseMovedHandler
         {
-            std::function<void(const putils::Point2i &pos)> handler;
+            std::function<void(const putils::Point2i& pos)> handler;
         };
 
         struct RegisterMouseButtonHandler
@@ -35,15 +38,24 @@ namespace kengine
             struct Query
             {
                 sf::Keyboard::Key key;
-                putils::BaseModule *sender;
+                putils::BaseModule* sender;
             };
-            struct Response { bool pressed; };
+            struct Response
+            {
+                bool pressed;
+            };
         }
 
         namespace MousePosition
         {
-            struct Query { putils::BaseModule *sender; };
-            struct Response { putils::Point2i pos; };
+            struct Query
+            {
+                putils::BaseModule* sender;
+            };
+            struct Response
+            {
+                putils::Point2i pos;
+            };
         }
 
         namespace MouseButtonStatus
@@ -51,9 +63,12 @@ namespace kengine
             struct Query
             {
                 sf::Mouse::Button button;
-                putils::BaseModule *sender;
+                putils::BaseModule* sender;
             };
-            struct Response { bool pressed; };
+            struct Response
+            {
+                bool pressed;
+            };
         }
     }
 }

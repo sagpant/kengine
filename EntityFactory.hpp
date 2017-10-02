@@ -19,7 +19,8 @@ namespace kengine
     {
     public:
         using Creator = std::function<std::unique_ptr<GameObject>(std::string_view name)>;
-        void addType(std::string_view type, const Creator &creator)
+
+        void addType(std::string_view type, const Creator& creator)
         {
             _creators[type.data()] = creator;
         }
@@ -29,14 +30,15 @@ namespace kengine
         {
             static_assert(putils::is_reflectible<T>::value,
                           "Please make your type reflectible before registering it");
-            _creators[T::get_class_name()] = [](auto name) { return std::make_unique<T>(name); };
+            _creators[T::get_class_name()] = [](auto name)
+            { return std::make_unique<T>(name); };
         }
 
         template<typename ...Types>
         void registerTypes()
         {
             pmeta::tuple_for_each(std::make_tuple(pmeta::type<Types>()...),
-                                  [this](auto &&t)
+                                  [this](auto&& t)
                                   {
                                       registerType<pmeta_wrapped(t)>();
                                   }

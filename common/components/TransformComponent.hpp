@@ -11,14 +11,14 @@ namespace kengine
                                public kengine::SerializableComponent<TransformComponent<Precision, Dimensions>>
     {
     public:
-        TransformComponent(const putils::Point<Precision, Dimensions> &pos = { 0, 0 },
-                           const putils::Point<Precision, Dimensions> &size = { 1, 1 })
+        TransformComponent(const putils::Point<Precision, Dimensions>& pos = {0, 0},
+                           const putils::Point<Precision, Dimensions>& size = {1, 1})
                 : boundingBox(pos, size)
-        {}
+        { }
 
-        TransformComponent(const putils::Rect<Precision, Dimensions> &rect)
+        TransformComponent(const putils::Rect<Precision, Dimensions>& rect)
                 : boundingBox(rect)
-        {}
+        { }
 
         const std::string type = pmeta_nameof(TransformComponent);
         putils::Rect<Precision, Dimensions> boundingBox;
@@ -30,9 +30,10 @@ namespace kengine
          */
 
     public:
-        static const auto get_class_name() { return pmeta_nameof(TransformComponent); }
+        static const auto get_class_name()
+        { return pmeta_nameof(TransformComponent); }
 
-        static const auto &get_attributes()
+        static const auto& get_attributes()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_attribute(&TransformComponent::type),
@@ -43,13 +44,13 @@ namespace kengine
             return table;
         }
 
-        static const auto &get_methods()
+        static const auto& get_methods()
         {
             static const auto table = pmeta::make_table();
             return table;
         }
 
-        static const auto &get_parents()
+        static const auto& get_parents()
         {
             static const auto table = pmeta::make_table();
             return table;

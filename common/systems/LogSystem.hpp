@@ -10,11 +10,12 @@ namespace kengine
     {
         // Ctor
     public:
-        LogSystem(kengine::EntityManager &) {}
+        LogSystem(kengine::EntityManager&)
+        { }
 
         // Packet handlers
     public:
-        void handle(const packets::Log &packet) const noexcept
+        void handle(const packets::Log& packet) const noexcept
         {
             std::cout << packet.msg << std::endl;
         }

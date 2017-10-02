@@ -17,6 +17,7 @@ namespace kengine
         }
 
     public:
-        static const auto get_class_name() { return pmeta_nameof(Text); }
+        static const auto get_class_name()
+        { return pmeta_nameof(Text); }
     };
 }

@@ -17,12 +17,12 @@ namespace kengine
     public:
         EntityManager(std::unique_ptr<EntityFactory>&& factory = std::make_unique<ExtensibleFactory>())
                 : _factory(std::move(factory))
-        {}
+        { }
 
         ~EntityManager() = default;
 
     public:
-        GameObject &createEntity(std::string_view type, std::string_view name,
+        GameObject& createEntity(std::string_view type, std::string_view name,
                                  const std::function<void(GameObject&)>& postCreate = nullptr)
         {
             auto e = _factory->make(type, name);
@@ -33,7 +33,7 @@ namespace kengine
             return addEntity(name, std::move(e));
         }
 
-        GameObject &createEntity(std::string_view type, const std::function<void(GameObject &)> &postCreate = nullptr)
+        GameObject& createEntity(std::string_view type, const std::function<void(GameObject&)>& postCreate = nullptr)
         {
             const auto it = _ids.find(type.data());
             if (it == _ids.end())
@@ -45,9 +45,9 @@ namespace kengine
         }
 
         template<class GO, typename ...Params>
-        GO &createEntity(std::string_view name,
-                         const std::function<void(GameObject &)> &postCreate = nullptr,
-                         Params &&...params)
+        GO& createEntity(std::string_view name,
+                         const std::function<void(GameObject&)>& postCreate = nullptr,
+                         Params&& ...params)
         {
             static_assert(std::is_base_of<GameObject, GO>::value,
                           "Attempt to create something that's not a GameObject");
@@ -61,9 +61,10 @@ namespace kengine
         }
 
         template<typename GO, typename ...Params>
-        GO &createEntity(const std::function<void(GameObject &)> &postCreate = nullptr, Params &&...params)
+        GO& createEntity(const std::function<void(GameObject&)>& postCreate = nullptr, Params&& ...params)
         {
-            static_assert(putils::is_reflectible<GO>::value, "createEntity must be given an explicit name if the type parameter is not reflectible.");
+            static_assert(putils::is_reflectible<GO>::value,
+                          "createEntity must be given an explicit name if the type parameter is not reflectible.");
 
             const auto type = GO::get_class_name();
             const auto it = _ids.find(type);
@@ -147,17 +148,18 @@ namespace kengine
             {
                 try
                 {
-                    auto &s = getSystem<RegisterWith>();
+                    auto& s = getSystem<RegisterWith>();
                     s.template registerTypes<Types...>();
                 }
-                catch (const std::out_of_range &) {}
+                catch (const std::out_of_range&)
+                { }
             }
 
             try
             {
-                auto &factory = getFactory<kengine::ExtensibleFactory>();
+                auto& factory = getFactory<kengine::ExtensibleFactory>();
                 pmeta::tuple_for_each(std::make_tuple(pmeta::type<Types>()...),
-                                      [&factory](auto &&t)
+                                      [&factory](auto&& t)
                                       {
                                           using Type = pmeta_wrapped(t);
                                           if constexpr (std::is_base_of<kengine::GameObject, Type>::value)
@@ -165,7 +167,8 @@ namespace kengine
                                       }
                 );
             }
-            catch (const std::out_of_range &) {}
+            catch (const std::out_of_range&)
+            { }
         }
 
     private:
@@ -174,6 +177,6 @@ namespace kengine
 
     private:
         std::unordered_map<std::string, std::unique_ptr<GameObject>> _entities;
-        std::unordered_map<const GameObject*, const GameObject*>     _entityHierarchy;
+        std::unordered_map<const GameObject*, const GameObject*> _entityHierarchy;
     };
 }

@@ -25,24 +25,27 @@ namespace kengine
                        public putils::Serializable<GameObject, false>
     {
     public:
-        GameObject(std::string_view name) : _name(name) {}
+        explicit GameObject(std::string_view name) : _name(name)
+        { }
 
-        GameObject(GameObject &&other) = default;
-        GameObject &operator=(GameObject &&other) = default;
+        GameObject(GameObject&& other) = default;
+
+        GameObject& operator=(GameObject&& other) = default;
+
         ~GameObject() = default;
 
     public:
         template<typename CT>
-        CT &attachComponent(std::unique_ptr<CT> &&comp);
+        CT& attachComponent(std::unique_ptr<CT>&& comp);
 
         template<typename CT>
         void detachComponent();
 
         template<typename CT>
-        void detachComponent(const CT &comp);
+        void detachComponent(const CT& comp);
 
         template<typename CT, typename ...Args>
-        CT &attachComponent(Args &&...args)
+        CT& attachComponent(Args&& ...args)
         {
             static_assert(std::is_base_of<IComponent, CT>::value,
                           "Attempt to attach something that's not a component");
@@ -51,19 +54,19 @@ namespace kengine
 
     public:
         template<class CT>
-        CT &getComponent()
+        CT& getComponent()
         {
             static_assert(std::is_base_of<IComponent, CT>::value,
                           "Attempt to get something that's not a component");
-            return static_cast<CT &>(*_components.at(pmeta::type<CT>::index));
+            return static_cast<CT&>(*_components.at(pmeta::type<CT>::index));
         };
 
         template<class CT>
-        const CT &getComponent() const
+        const CT& getComponent() const
         {
             static_assert(std::is_base_of<IComponent, CT>::value,
                           "Attempt to get something that's not a component");
-            return static_cast<const CT &>(*_components.at(pmeta::type<CT>::index));
+            return static_cast<const CT&>(*_components.at(pmeta::type<CT>::index));
         };
 
     public:
@@ -76,13 +79,18 @@ namespace kengine
         }
 
     public:
-        std::string_view getName() const { return _name; }
-        const std::vector<pmeta::type_index> &getTypes() const { return _types; }
+        std::string_view getName() const
+        { return _name; }
+
+        const std::vector<pmeta::type_index>& getTypes() const
+        { return _types; }
 
     private:
         friend class ComponentManager;
-        ComponentManager *_manager = nullptr;
-        void setManager(ComponentManager *manager)
+
+        ComponentManager* _manager = nullptr;
+
+        void setManager(ComponentManager* manager)
         {
             _manager = manager;
         }
@@ -90,16 +98,17 @@ namespace kengine
     private:
         std::string _name;
         std::unordered_map<pmeta::type_index, std::shared_ptr<IComponent>> _components;
-        std::vector<pmeta::type_index > _types;
+        std::vector<pmeta::type_index> _types;
 
-    /*
-     * Reflectible
-     */
+        /*
+         * Reflectible
+         */
 
     public:
-        static const auto get_class_name() { return "GameObject"; }
+        static const auto get_class_name()
+        { return "GameObject"; }
 
-        static const auto &get_attributes()
+        static const auto& get_attributes()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_attribute_private(&GameObject::_name),
@@ -108,7 +117,7 @@ namespace kengine
             return table;
         }
 
-        static const auto &get_methods()
+        static const auto& get_methods()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_attribute(&GameObject::getName)
@@ -116,7 +125,7 @@ namespace kengine
             return table;
         }
 
-        static const auto &get_parents()
+        static const auto& get_parents()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_parent(putils::Mediator)
@@ -143,7 +152,7 @@ void kengine::GameObject::detachComponent()
 }
 
 template<typename CT>
-void kengine::GameObject::detachComponent(const CT &comp)
+void kengine::GameObject::detachComponent(const CT& comp)
 {
     static_assert(std::is_base_of<IComponent, CT>::value,
                   "Attempt to detach something that's not a component");
@@ -157,12 +166,12 @@ void kengine::GameObject::detachComponent(const CT &comp)
 }
 
 template<typename CT>
-CT &kengine::GameObject::attachComponent(std::unique_ptr<CT> &&comp)
+CT& kengine::GameObject::attachComponent(std::unique_ptr<CT>&& comp)
 {
     static_assert(std::is_base_of<IComponent, CT>::value,
                   "Attempt to attach something that's not a component");
 
-    auto &ret = *comp;
+    auto& ret = *comp;
 
     addModule(*comp);
     const auto type = comp->getType();

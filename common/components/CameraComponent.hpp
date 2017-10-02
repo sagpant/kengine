@@ -8,17 +8,17 @@ namespace kengine
 {
     template<typename Precision, std::size_t Dimensions>
     class CameraComponent : public putils::Reflectible<CameraComponent<Precision, Dimensions>>,
-                               public kengine::SerializableComponent<CameraComponent<Precision, Dimensions>>
+                            public kengine::SerializableComponent<CameraComponent<Precision, Dimensions>>
     {
     public:
-        CameraComponent(const putils::Point<Precision, Dimensions> &pos = { 0, 0 },
-                           const putils::Point<Precision, Dimensions> &size = { 1, 1 })
+        explicit CameraComponent(const putils::Point<Precision, Dimensions>& pos = {0, 0},
+                        const putils::Point<Precision, Dimensions>& size = {1, 1})
                 : frustrum(pos, size)
-        {}
+        { }
 
-        CameraComponent(const putils::Rect<Precision, Dimensions> &rect)
+        explicit CameraComponent(const putils::Rect<Precision, Dimensions>& rect)
                 : frustrum(rect)
-        {}
+        { }
 
         const std::string type = pmeta_nameof(CameraComponent);
         putils::Rect<Precision, Dimensions> frustrum;
@@ -30,9 +30,10 @@ namespace kengine
          */
 
     public:
-        static const auto get_class_name() { return pmeta_nameof(CameraComponent); }
+        static const auto get_class_name()
+        { return pmeta_nameof(CameraComponent); }
 
-        static const auto &get_attributes()
+        static const auto& get_attributes()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_attribute(&CameraComponent::type),
@@ -43,13 +44,13 @@ namespace kengine
             return table;
         }
 
-        static const auto &get_methods()
+        static const auto& get_methods()
         {
             static const auto table = pmeta::make_table();
             return table;
         }
 
-        static const auto &get_parents()
+        static const auto& get_parents()
         {
             static const auto table = pmeta::make_table();
             return table;

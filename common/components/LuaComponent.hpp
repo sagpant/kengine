@@ -11,7 +11,7 @@ namespace kengine
                          public SerializableComponent<LuaComponent>
     {
     public:
-        LuaComponent(const std::vector<std::string> &scripts = {})
+        LuaComponent(const std::vector<std::string>& scripts = { })
                 : _scripts(scripts)
         {
         }
@@ -21,7 +21,8 @@ namespace kengine
         std::string debug;
 
     public:
-        void attachScript(std::string_view file) noexcept { _scripts.push_back(file.data()); }
+        void attachScript(std::string_view file) noexcept
+        { _scripts.push_back(file.data()); }
 
         void removeScript(std::string_view file) noexcept
         {
@@ -29,7 +30,8 @@ namespace kengine
         }
 
     public:
-        const std::vector<std::string> &getScripts() const noexcept { return _scripts; }
+        const std::vector<std::string>& getScripts() const noexcept
+        { return _scripts; }
 
     private:
         const std::string type = pmeta_nameof(LuaComponent);
@@ -39,9 +41,10 @@ namespace kengine
          * Reflectible
          */
     public:
-        static const auto get_class_name() { return pmeta_nameof(LuaComponent); }
+        static const auto get_class_name()
+        { return pmeta_nameof(LuaComponent); }
 
-        static const auto &get_attributes()
+        static const auto& get_attributes()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_attribute(&LuaComponent::type),
@@ -52,7 +55,7 @@ namespace kengine
             return table;
         }
 
-        static const auto &get_methods()
+        static const auto& get_methods()
         {
             static const auto table = pmeta::make_table(
                     pmeta_reflectible_attribute(&LuaComponent::attachScript),
@@ -61,7 +64,7 @@ namespace kengine
             return table;
         }
 
-        static const auto &get_parents()
+        static const auto& get_parents()
         {
             static const auto table = pmeta::make_table(
             );
